@@ -1,0 +1,12 @@
+# Ardrone vehicle parameters
+mass: 0.027
+inertia: {xx: 2.3951e-5, xy: 0.0, xz: 0.0, yy: 2.3951e-5, yz: 0.0, zz: 3.2347e-5}
+
+# angle should be expressed in rad
+# direction 1 means counter clockwise, -1 clockwise
+# The order of the rotors matters for the calculation of the allocation matrix.
+rotor_configuration:
+  '0': {angle: -0.78539, arm_length: 0.02275, rotor_force_constant: 1.8580e-05, rotor_moment_constant: 0.005, direction: 1.0}
+  '1': {angle: 2.35619, arm_length: 0.02275, rotor_force_constant: 1.8580e-05, rotor_moment_constant: 0.005, direction: 1.0}
+  '2': {angle: 0.78539, arm_length: 0.02275, rotor_force_constant: 1.8580e-05, rotor_moment_constant: 0.005, direction: -1.0}
+  '3': {angle: -2.35619, arm_length: 0.02275, rotor_force_constant: 1.8580e-05, rotor_moment_constant: 0.005, direction: -1.0}
