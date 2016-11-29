@@ -12,6 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+
+ * Edited by Lakshman
+
  */
 
 #include "rotors_joy_interface/key_teleop.h"
@@ -30,6 +33,13 @@ KeyTeleop::KeyTeleop() {
   pnh.param("control_timeout", control_timeout_, kDefaultControlTimeout);
   pnh.param("is_fixed_wing", is_fixed_wing_, kDefaultIsFixedWing);
   pnh.param("controls_sensitivity", sensitivity_, kDefaultSensitivity);
+
+  pnh.param("max_v_xy", max_.v_xy, 1.0);  // [m/s]
+  pnh.param("max_roll", max_.roll, 10.0 * M_PI / 180.0);  // [rad]
+  pnh.param("max_pitch", max_.pitch, 10.0 * M_PI / 180.0);  // [rad]
+  pnh.param("max_yaw_rate", max_.rate_yaw, 45.0 * M_PI / 180.0);  // [rad/s]
+  pnh.param("max_thrust", max_.thrust,25.0);  // [N]
+
 
   ctrl_pub_ = nh_.advertise<mav_msgs::RollPitchYawrateThrust>
     (control_pub_topic, 1);
@@ -82,14 +92,18 @@ void KeyTeleop::KeyInputLoop() {
         last_roll_time_ = curr_time;
         break;
       case KEYCODE_PITCH_UP:
-        pitch_ -= sensitivity_;
-        pitch_ = (pitch_ < -1.0) ? -1.0 : pitch_;
-        last_pitch_time_ = curr_time;
+        thrust_ -= 10*sensitivity_;
+        thrust_ = (thrust_ > max_.thrust) ? max_.thrust : thrust_;
+	//pitch_ -= sensitivity_;
+        //pitch_ = (pitch_ < -1.0) ? -1.0 : pitch_;
+        //last_pitch_time_ = curr_time;
         break;
       case KEYCODE_PITCH_DOWN:
-        pitch_ += sensitivity_;
-        pitch_ = (pitch_ > 1.0) ? 1.0 : pitch_;
-        last_pitch_time_ = curr_time;
+	thrust_ += 10*sensitivity_;
+        thrust_ = (thrust_ < 0.0) ? 0.0 : thrust_;
+        //pitch_ += sensitivity_;
+        //pitch_ = (pitch_ > 1.0) ? 1.0 : pitch_;
+        //last_pitch_time_ = curr_time;
         break;
       case KEYCODE_YAW_LEFT:
         yaw_ -= sensitivity_;
@@ -103,7 +117,7 @@ void KeyTeleop::KeyInputLoop() {
         break;
       case KEYCODE_THRUST_UP:
         thrust_ += sensitivity_;
-        thrust_ = (thrust_ > 1.0) ? 1.0 : thrust_;
+        thrust_ = (thrust_ > max_.thrust) ? max_.thrust : thrust_;
         break;
       case KEYCODE_THRUST_DOWN:
         thrust_ -= sensitivity_;
@@ -115,6 +129,7 @@ void KeyTeleop::KeyInputLoop() {
         pitch_ = 0.0;
         yaw_ = 0.0;
         thrust_ = 0.0;
+	break;
       case KEYCODE_QUIT:
         ROS_INFO("Keyboard teleop - shuttind down");
         Shutdown();
@@ -150,7 +165,6 @@ void KeyTeleop::KeyInputLoop() {
 
 void KeyTeleop::Shutdown() {
   // Restore the old attributes
-  tcsetattr(STDIN_FD, TCSANOW, &attributes_old_);
   ros::shutdown();
 }
 }

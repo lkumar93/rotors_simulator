@@ -40,9 +40,17 @@ static constexpr int KEYCODE_RESET = 0x52;          // 'R'
 static constexpr int KEYCODE_QUIT = 0x51;           // 'Q'
 
 // Default values
-static constexpr bool kDefaultIsFixedWing = true;
+static constexpr bool kDefaultIsFixedWing = false;
 static constexpr double kDefaultControlTimeout = 0.5;
-static constexpr double kDefaultSensitivity = 0.05;
+static constexpr double kDefaultSensitivity = 0.01;
+
+struct Max {
+  double v_xy;
+  double roll;
+  double pitch;
+  double rate_yaw;
+  double thrust;
+};
 
 class KeyTeleop {
  public:
@@ -66,6 +74,7 @@ class KeyTeleop {
   double pitch_;
   double yaw_;
   double thrust_;
+  Max max_;
 
   // Controls sensitivity
   double sensitivity_;

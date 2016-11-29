@@ -49,7 +49,7 @@ Joy::Joy() {
   pnh.param("max_roll", max_.roll, 10.0 * M_PI / 180.0);  // [rad]
   pnh.param("max_pitch", max_.pitch, 10.0 * M_PI / 180.0);  // [rad]
   pnh.param("max_yaw_rate", max_.rate_yaw, 45.0 * M_PI / 180.0);  // [rad/s]
-  pnh.param("max_thrust", max_.thrust, 30.0);  // [N]
+  pnh.param("max_thrust", max_.thrust, 1.5);  // [N]
 
   pnh.param("v_yaw_step", v_yaw_step_, 0.05);  // [rad/s]
 
@@ -88,7 +88,7 @@ void Joy::JoyCallback(const sensor_msgs::JoyConstPtr& msg) {
     current_yaw_vel_ = 0;
   }
   control_msg_.yaw_rate = current_yaw_vel_;
-  control_msg_.thrust.z = (msg->axes[axes_.thrust] + 1) * max_.thrust / 2.0 * axes_.thrust_direction;
+  control_msg_.thrust.z = max_.thrust - ( msg->axes[axes_.thrust] + 1 ) * max_.thrust / 2.0 * axes_.thrust_direction;
   ros::Time update_time = ros::Time::now();
   control_msg_.header.stamp = update_time;
   control_msg_.header.frame_id = "rotors_joy_frame";
