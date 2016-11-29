@@ -1,4 +1,4 @@
-# Ardrone vehicle parameters
+# Crazyflie2 vehicle parameters
 mass: 0.027
 inertia: {xx: 2.3951e-5, xy: 0.0, xz: 0.0, yy: 2.3951e-5, yz: 0.0, zz: 3.2347e-5}
 
